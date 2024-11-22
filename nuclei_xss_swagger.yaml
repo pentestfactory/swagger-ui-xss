@@ -24,8 +24,16 @@ headless:
         - "/api-docs"
         - "/swagger"
         - "/v1/swagger"
-
+        - ""
+    
+    matchers-condition: and
     matchers:
       - type: dsl
         dsl:
           - reflected_xss_dialog == true
+
+      - type: word
+        part: body
+        words:
+          - "swagger"
+        case-insensitive: true
